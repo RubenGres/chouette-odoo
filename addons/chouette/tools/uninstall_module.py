@@ -32,10 +32,10 @@ args = vars(parser.parse_args())
 # Log in
 ws_common = xmlrpclib.ServerProxy(args['url'] + '/xmlrpc/common')
 uid = ws_common.login(args['database'], args['user'], args['password'])
-print "Logged in to the common web service."
+print( "Logged in to the common web service.")
 # Get the object proxy
 ws_object = xmlrpclib.ServerProxy(args['url'] + '/xmlrpc/object')
-print "Connected to the object web service."
+print( "Connected to the object web service.")
 
 # Find the parent location by name
 res_ids = ws_object.execute(
@@ -45,10 +45,10 @@ if len(res_ids) != 1:
     raise Exception("Search failed")
 
 # Uninstall the module
-print "Uninstalling '%s'" % args['module']
+print( "Uninstalling '%s'" % args['module'])
 ws_object.execute(
     args['database'], uid, args['password'],
     'ir.module.module', "button_immediate_uninstall", res_ids)
 
-print "All done."
+print( "All done.")
 

@@ -2,7 +2,7 @@
 
 """
 Try to dump Odoo database in a way suitable for diff
-after updating Odoo (openerp-server -d db -u all)
+after updating Odoo (odoo-server -d db -u all)
 """
 
 import sys
@@ -67,15 +67,15 @@ for table in sorted(public_table_list()):
     cursor.execute('SELECT "{0}" FROM {1} {2} {3}'.format(
         '","'.join(columns), table, where, order))
 
-    print
-    print "|===================================================|"
-    print "|", table, "|"
-    print "|===================================================|"
-    print "  |  ".join(columns)
+    print()
+    print( "|===================================================|")
+    print( "|", table, "|")
+    print( "|===================================================|")
+    print( "  |  ".join(columns))
     for r in cursor.fetchall():
         s = ""
         for i in range(len(columns)):
             if i>0:
                 s = s + "  |  "
             s = s + to_string(table, columns[i], r[i])
-        print s
+        print(s)

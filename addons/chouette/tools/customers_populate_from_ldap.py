@@ -7,7 +7,7 @@ import yaml
 import os.path
 import argparse
 import xmlrpclib
-from pprint import pprint
+from pprint( import pprint)
 
 """
 Update the list of Odoo customers (contacts stored in res.partner table)
@@ -45,7 +45,7 @@ def main(dry_run=False):
 
 def ldap_person_to_odoo_customer(ldap_person):
     """Extract variable name, barcode, email"""
-    #pprint(ldap_person)
+    #pprint((ldap_person))
     return {
         'name': decode_utf8(ldap_person['description'][0])
                 + ' '
@@ -85,26 +85,26 @@ def get_odoo_customers(odoo, fields):
 def create_or_update_odoo_new_customers(odoo, old_customers_dict, new_customers_dict, dry_run=False):
     for barcode, new_cstmr in new_customers_dict.items():
         if not barcode:
-            print "# LDAP person without barcode:", new_cstmr["name"].encode("utf8"), new_cstmr["email"]
+            print( "# LDAP person without barcode:", new_cstmr["name"].encode("utf8"), new_cstmr["email"])
         if barcode not in old_customers_dict:
-            print "+ create customer", new_cstmr["name"].encode("utf8"), new_cstmr["email"]
+            print( "+ create customer", new_cstmr["name"].encode("utf8"), new_cstmr["email"])
             if not dry_run:
                 id = odoo.create('res.partner', [new_cstmr])
-                print "    => id", id
+                print( "    => id", id)
         else:
             old_cstmr = old_customers_dict[barcode]
             differences = {field:value for field,value in new_cstmr.items() if old_cstmr[field] != value}
             if differences:
-                print ('! update customer ' + str(old_cstmr['id']) + " " + old_cstmr['name'] + ' set ' + str(differences)).encode("utf8")
+                print( ('! update customer ' + str(old_cstmr['id']) + " " + old_cstmr['name'] + ' set ' + str(differences)).encode("utf8"))
                 if not dry_run:
                     odoo.write('res.partner', [[old_cstmr["id"]], differences])
 
 def deactivate_odoo_old_customers(odoo, old_customers_dict, new_customers_dict, dry_run=False):
     for barcode, old_cstmr in old_customers_dict.items():
         if not barcode:
-            print "# Odoo customer without barcode:", old_cstmr["id"], old_cstmr["name"].encode("utf8"), old_cstmr["email"]
+            print( "# Odoo customer without barcode:", old_cstmr["id"], old_cstmr["name"].encode("utf8"), old_cstmr["email"])
         elif barcode not in new_customers_dict and old_cstmr['active']:
-            print '- deactivate customer', old_cstmr["id"], old_cstmr["name"].encode("utf8"), old_cstmr["email"]
+            print( '- deactivate customer', old_cstmr["id"], old_cstmr["name"].encode("utf8"), old_cstmr["email"])
             if not dry_run:
                 odoo.write('res.partner', [[old_cstmr["id"]], {'active': False}])
 
@@ -163,23 +163,23 @@ def open_conf_file(filename):
     for section, fields in {"ldap":["url","username","password","dn"],
                             "odoo":["url","db","username","password"]}.items():
         if section not in conf:
-            print "ERREUR: missing section «{0}:» in {1}".format(section, filename)
+            print( "ERREUR: missing section «{0}:» in {1}".format(section, filename))
             sys.exit(-1)
         else:
             fields = set(fields)
             actual_fields = set(conf[section].keys())
             for field in (fields - actual_fields):
-                print "ERROR: missing field «{0}:» in section «{1}:» of file {2}".format(field, section, filename)
+                print( "ERROR: missing field «{0}:» in section «{1}:» of file {2}".format(field, section, filename))
                 sys.exit(-1)
             for field in (actual_fields - fields):
-                print "ERROR: unknown field «{0}:» in section «{1}:» of file {2}".format(field, section, filename)
+                print( "ERROR: unknown field «{0}:» in section «{1}:» of file {2}".format(field, section, filename))
                 sys.exit(-1)
     return conf
 
 # -d option allows to show what would be changed
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(sys.argv[0], description="Synchonize Odoo customers from LDAP persons")
-    parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true', help="only print intended actions, don't actualy modify Odoo customers")
+    parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true', help="only print( intended actions, don't actualy modify Odoo customers"))
     parser.set_defaults(dry_run=False)
     args = parser.parse_args()
     main(args.dry_run)
